@@ -83,7 +83,7 @@ router.get("/api/cartItem", authMiddleware, allCartItems);
 router.put("/api/cartItem/", authMiddleware, updateItem);
 
 // delete a item in cart
-router.delete("/api/cartItem/:user_name/:food_id", deleteItem);
+router.delete("/api/cartItem/:user_id/:food_id", authMiddleware, deleteItem);
 
 // delete all items in cart
 router.delete("/api/cartItem/:id", deleteItems);

@@ -11,5 +11,11 @@ up:
 get-orders:
 	curl -s -H "x-api-key: $(api-key)" http://localhost:8001/api/cartItem | jq
 
-put-orders:
-	curl -s -X PUT http://localhost:8001/api/cartItem -H "Content-Type: application/json" -H "x-api-key: $(api-key)" -d '{"user_id":4,"food_id":6,"item_qty":0}'
+user_id=11
+food_id=4
+
+delete-order:
+	curl -s -X DELETE http://localhost:8001/api/cartItem/$(user_id)/${food_id} -H "Content-Type: application/json" -H "x-api-key: $(api-key)"
+
+put-order:
+	curl -s -X PUT http://localhost:8001/api/cartItem -H "Content-Type: application/json" -H "x-api-key: $(api-key)" -d '{"user_id":11,"food_id":4,"item_qty":0}'
