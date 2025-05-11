@@ -54,11 +54,9 @@ app.get('/*', function (req, res) {
 // PORT
 const PORT = process.env.PORT || 8001;
 // http server
-/*
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
-*/
 
 import https from 'https';
 import fs from 'fs';
@@ -66,6 +64,6 @@ const sslOptions = {
   key: fs.readFileSync('./server.key'),
   cert: fs.readFileSync('./server.crt')
 };
-https.createServer(sslOptions, app).listen(PORT, () => {
+https.createServer(sslOptions, app).listen(8002, () => {
   console.log(`HTTPS Server is running on port ${PORT}.`);
 });

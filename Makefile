@@ -9,6 +9,9 @@ up:
 	cd frontend && npm run serve
 
 get-orders:
+	curl -k -s -H "x-api-key: $(api-key)" https://localhost:8002/api/cartItem | jq
+
+get-orders-http:
 	curl -s -H "x-api-key: $(api-key)" http://localhost:8001/api/cartItem | jq
 
 user_id=11
