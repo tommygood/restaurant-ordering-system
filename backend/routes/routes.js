@@ -18,6 +18,7 @@ import {
   allItems,
   deleteItem,
   deleteItems,
+	allCartItems,
 } from "../controllers/cart.js";
 
 import { createBooking } from "../controllers/booktable.js";
@@ -37,6 +38,8 @@ import {
   updateBillPaid,
   cancelBillStatus,
 } from "../controllers/billstatus.js";
+
+import { authMiddleware } from '../middlewares/auth.js';
 
 // init express router
 const router = express.Router();
@@ -74,8 +77,10 @@ router.get("/api/cartItem/:user_name/:food_id", getItem);
 // get all items by user id
 router.get("/api/cartItem/:user_name", allItems);
 
+router.get("/api/cartItem", authMiddleware, allCartItems);
+
 // update item qty
-router.put("/api/cartItem/", updateItem);
+router.put("/api/cartItem/", authMiddleware, updateItem);
 
 // delete a item in cart
 router.delete("/api/cartItem/:user_name/:food_id", deleteItem);

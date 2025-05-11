@@ -1,6 +1,19 @@
 // import connection
 import db from "../config/database.js";
 
+
+export const getAllCartItems = (result) => {
+  db.query("SELECT * FROM cart WHERE item_qty > 0", (err, results) => {
+    if (err) {
+      console.log(err);
+      result(err, null);
+    } else {
+      result(null, results);
+    }
+  });
+};
+
+
 // get all items by user id
 export const getAllItems = (id, result) => {
   db.query("SELECT * FROM cart WHERE user_id = ?", [id], (err, results) => {

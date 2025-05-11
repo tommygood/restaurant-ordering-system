@@ -8,7 +8,21 @@ import {
   deleteItemInCart,
   deleteAllItemsByUser,
   getUserId,
+	getAllCartItems,
 } from "../models/CartModel.js";
+
+
+// get all Items
+export const allCartItems = (req, res) => {
+    getAllCartItems((err, results) => {
+      if (err) {
+        res.send(err);
+      } else {
+        console.log(`TT ${results}, ${JSON.stringify(results)}`);
+        res.json(results);
+      }
+    });
+};
 
 // get all Items
 export const allItems = (req, res) => {
@@ -17,7 +31,6 @@ export const allItems = (req, res) => {
       if (err) {
         res.send(err);
       } else {
-        console.log(`TT ${results}, ${JSON.stringify(results)}`);
         res.json(results);
       }
     });
