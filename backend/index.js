@@ -53,15 +53,19 @@ app.get('/*', function (req, res) {
 
 // PORT
 const PORT = process.env.PORT || 8001;
+// http server
+/*
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+*/
 
-// https://www.youtube.com/watch?v=GK2TiAAxmQ0
-// https://www.bezkoder.com/node-js-rest-api-express-mysql/
-// https://www.bezkoder.com/serve-vue-app-express/
-// https://www.bezkoder.com/deploy-node-js-app-heroku-cleardb-mysql/
-// https://www.youtube.com/watch?v=W-b9KGwVECs
-// https://stackoverflow.com/questions/43362014/heroku-no-default-language-could-be-detected-for-this-app-error-thrown-for-no
-// https://stackoverflow.com/questions/16128395/what-is-procfile-and-web-and-worker
-// https://www.youtube.com/watch?v=lwOsI8LtVEQ
+import https from 'https';
+import fs from 'fs';
+const sslOptions = {
+  key: fs.readFileSync('./server.key'),
+  cert: fs.readFileSync('./server.crt')
+};
+https.createServer(sslOptions, app).listen(PORT, () => {
+  console.log(`HTTPS Server is running on port ${PORT}.`);
+});

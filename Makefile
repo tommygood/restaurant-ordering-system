@@ -19,3 +19,6 @@ delete-order:
 
 put-order:
 	curl -s -X PUT http://localhost:8001/api/cartItem -H "Content-Type: application/json" -H "x-api-key: $(api-key)" -d '{"user_id":11,"food_id":4,"item_qty":0}'
+
+create-crt:
+	openssl req -nodes -new -x509 -keyout backned/server.key -out backend/server.crt -days 365
