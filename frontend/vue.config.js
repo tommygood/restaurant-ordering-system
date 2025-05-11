@@ -5,6 +5,7 @@ const path = require('path');
 // });
 
 module.exports = {
+	filenameHashing: true,
   outputDir: path.resolve(__dirname, '../backend/restaurant_management'),
   devServer: {
     proxy: {

@@ -82,6 +82,7 @@ export default {
   mounted() {
     // 檢查 localStorage 中是否已有 user
     let userInStorage = localStorage.getItem("user");
+			console.log(`NN ${userInStorage}`);
 
     if (!userInStorage) {
       const username = prompt("請輸入你的使用者名稱：");

@@ -152,7 +152,7 @@
 
 <script>
 import axios from "axios";
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
   name: "Cart",
 
@@ -180,6 +180,16 @@ export default {
   },
 
   methods: {
+    ...mapMutations(["setUser"]),
+
+		checkUserExisted: function() {
+			let userInStorage = localStorage.getItem("user");
+				const parsedUser = JSON.parse(userInStorage);
+				if (!this.user && parsedUser !== null) {
+					this.setUser(parsedUser); // 若 Vuex 中還沒設好，再同步
+				}
+		},
+
     matchID: function (food, cartArray) {
       let temp = "";
       cartArray.forEach((element) => {
@@ -256,10 +266,9 @@ export default {
     },
 
     async getAllCartItem() {
-      console.log("RR", this.user);
+			this.checkUserExisted();
       if (this.user) {
         let existItem = await axios.get("/cartItem/" + this.user.username);
-        console.log(`QQ ${JSON.stringify(existItem.data)}`);
         existItem.data.forEach((element) => {
           this.cartItem.push(element.food_id);
           this.itemQuantity.push(element.item_qty);
