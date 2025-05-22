@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import axios from "axios";
+axios.defaults.baseURL = "/api";
 
 const store = createStore({
   state() {
@@ -24,7 +25,7 @@ const store = createStore({
   actions: {
     async getFoodsData(context) {
       await axios
-        .get("/foods")
+        .get("https://mixed-restaurant.bogay.me/api/foods")
         .then(function (response) {
           context.commit("setFoodsData", response.data);
         })

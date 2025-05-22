@@ -8,6 +8,7 @@ module.exports = {
 	filenameHashing: true,
   outputDir: path.resolve(__dirname, '../backend/restaurant_management'),
   devServer: {
+		allowedHosts: ['mixed-restaurant.bogay.me'],
     proxy: {
       '/': {
         target: 'http://localhost:8001'

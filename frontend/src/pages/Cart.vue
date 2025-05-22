@@ -169,6 +169,7 @@ export default {
 
   mounted() {
     this.getAllCartItem();
+		this.setTableId();
   },
 
   computed: {

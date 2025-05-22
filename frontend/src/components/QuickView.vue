@@ -82,7 +82,6 @@ export default {
   mounted() {
     // 檢查 localStorage 中是否已有 user
     let userInStorage = localStorage.getItem("user");
-			console.log(`NN ${userInStorage}`);
 
     if (!userInStorage) {
       const username = prompt("請輸入你的使用者名稱：");
@@ -134,6 +133,7 @@ export default {
           user_name: this.user.username,
           food_id: parseInt(this.food),
           item_qty: parseInt(this.qty),
+					table_id: localStorage.getItem("table_id") == null ? 1 : parseInt(localStorage.getItem("table_id")),
         };
 
         await axios.post("/cartItem/", data);

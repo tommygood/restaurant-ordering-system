@@ -6,7 +6,7 @@ install:
 
 up:
 	cd backend && node index.js & \
-	cd frontend && npm run serve
+	cd frontend && npm run start
 
 get-orders:
 	curl -k -s -H "x-api-key: $(api-key)" https://localhost:8002/api/cartItem | jq

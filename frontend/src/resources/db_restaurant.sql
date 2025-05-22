@@ -69,11 +69,20 @@ CREATE TABLE user(
     user_gender VARCHAR(255)
 ) ENGINE=INNODB;
 
+CREATE TABLE tables(
+	table_id INT(11) PRIMARY KEY AUTO_INCREMENT,
+	for_here_or_to_go BOOLEAN
+);
+
+INSERT INTO tables(`for_here_or_to_go`) VALUES(false);
+INSERT INTO tables(`for_here_or_to_go`) VALUES(false);
+INSERT INTO tables(`for_here_or_to_go`) VALUES(true);
 
 CREATE TABLE cart (
   user_id INT,
   food_id INT,
   item_qty INT,
+	table_id INT,
   primary key (user_id, food_id)
 );
 

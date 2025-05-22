@@ -2,7 +2,7 @@
     <div class="menu-section">
         <div class="heading">
             <span>menu</span>
-            <h3>our special dishes</h3>
+            <h3>our special dishes !!</h3>
         </div>
 
         <div class="row">
@@ -226,6 +226,10 @@ import { mapState } from "vuex";
 export default {
     name: "Menu",
 
+		mounted() {
+			this.setTableId();
+		},
+
     data() {
         return {
             foodObj: { name: "", category: "", status: [], price: "", type: "" },
@@ -265,6 +269,16 @@ export default {
         }
     },
     methods: {
+				isNumeric: function(n) {
+					return !isNaN(parseFloat(n)) && isFinite(n);
+				},
+				setTableId: function() {
+					const table_id = this.$route.query.table_id;
+					if (this.isNumeric(table_id)) {
+						localStorage.setItem("table_id", table_id);
+					}
+				},
+
         set(val) {
             this.pageNum = val;
         },
