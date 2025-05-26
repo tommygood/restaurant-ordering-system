@@ -38,10 +38,10 @@
                   <div class="box-content row">
                     <div class="image-box col-sm-3" style="padding-left: 0">
                       <img
-                        :src="require(`../assets/images/${f.food_src}`)"
+												:src="`/api/download/order_${f.user_id}_${f.food_id}_${f.table_id}.png`"
                         alt=""
                         class="cart-product-img"
-                      />
+                     />
                     </div>
 
                     <div class="desc col-sm-4">
@@ -88,6 +88,14 @@
                         ${{ calculateItemPrice(index) }}
                       </h4>
                     </div>
+
+										<button
+											v-if="f.user_id"
+											@click="onGradeClick(f)"
+											class="btn btn-primary mt-2"
+										>
+											Grade
+										</button>
                   </div>
                 </div>
               </div>
@@ -160,6 +168,7 @@ export default {
     return {
       cartItem: [],
       itemQuantity: [],
+      existItem: [],
     };
   },
 
@@ -176,12 +185,33 @@ export default {
     ...mapState(["allFoods", "user"]),
 
     filterFoods: function () {
-      return this.allFoods.filter((f) => this.matchID(f, this.cartItem));
-    },
+			console.log("oo", this.allFoods);
+			console.log("ww", this.cartItem); // [1,3]
+			if (this.existItem.data === undefined) return [];
+			console.log("pp", this.existItem.data); // [{ food_id: 1, user_id: 2}];
+			const res = this.allFoods
+			.filter(f => 
+				this.existItem.data.some(item => item.food_id === f.food_id)
+			)
+			.map(f => {
+				const matchedItem = this.existItem.data.find(item => item.food_id === f.food_id);
+				return {
+					...f,
+					user_id: matchedItem.user_id,
+					table_id: matchedItem.table_id
+				};
+			});
+			console.log("final res", res);
+			return res;
+		},
   },
 
   methods: {
     ...mapMutations(["setUser"]),
+
+		onGradeClick: function(order) {
+			console.log("order", order);
+		},
 
 		checkUserExisted: function() {
 			let userInStorage = localStorage.getItem("user");
@@ -214,6 +244,8 @@ export default {
       let discount = 0;
       let delivery = 15;
       let i = 0;
+			console.log("qwqq", this.filterFoods);
+			if (this.filterFoods.length === 0) return [subtotal, discount, delivery, 0];
       while (i < this.itemQuantity.length) {
         subtotal =
           subtotal +
@@ -269,8 +301,10 @@ export default {
     async getAllCartItem() {
 			this.checkUserExisted();
       if (this.user) {
-        let existItem = await axios.get("/cartItem/" + this.user.username);
-        existItem.data.forEach((element) => {
+        const existItem = await axios.get("/cartItem/" + this.user.username);
+				this.existItem = existItem;
+				console.log("ff", existItem);
+        this.existItem.data.forEach((element) => {
           this.cartItem.push(element.food_id);
           this.itemQuantity.push(element.item_qty);
         });

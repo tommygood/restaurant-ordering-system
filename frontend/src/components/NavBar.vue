@@ -71,7 +71,7 @@ export default {
       let navbar = document.querySelector(".header .navbar");
       navbar.classList.remove("active");
       let log = document.querySelector(".drop-down-select");
-      log.classList.remove("active");
+			if (log != null) log.classList.remove("active");
     },
 
     handleLogout: function () {

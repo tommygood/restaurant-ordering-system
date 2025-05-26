@@ -79,10 +79,13 @@ INSERT INTO tables(`for_here_or_to_go`) VALUES(false);
 INSERT INTO tables(`for_here_or_to_go`) VALUES(true);
 
 CREATE TABLE cart (
+	cart_id INT(11) PRIMARY KEY AUTO_INCREMENT, 
   user_id INT,
   food_id INT,
   item_qty INT,
 	table_id INT,
+	feedback VARCHAR(500),
+	grade INT(2)
   primary key (user_id, food_id)
 );
 

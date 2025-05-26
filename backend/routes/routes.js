@@ -9,7 +9,7 @@ import {
   deleteFood,
 } from "../controllers/food.js";
 
-import { uploadFile } from "../controllers/file.js";
+import { uploadFile, downloadFile } from "../controllers/file.js";
 
 import { showAUser, createAccount } from "../controllers/user.js";
 
@@ -107,6 +107,7 @@ router.put("/api/billstatus/:id", updateBillStatus);
 router.put("/api/billstatus/paid/:id", updateBillPaid);
 router.put("/api/billstatus/cancel/:id", cancelBillStatus);
 router.post("/api/upload", uploadFile); 
+router.get("/api/download/:filename", downloadFile);
 
 // export default router
 export default router;

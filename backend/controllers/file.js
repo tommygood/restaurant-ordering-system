@@ -21,7 +21,6 @@ const storage = multer.diskStorage({
 
 const fileFilter = function (req, file, cb) {
   const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
-  console.log(`QQ ${file.mimetype}, ${allowedTypes.includes(file.mimetype)}`);
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
@@ -55,3 +54,23 @@ export const uploadFile = (req, res) => {
     });
   });
 };
+
+export const downloadFile = (req, res) => {
+  const filename = req.params.filename;
+  
+  const filePath = path.join(uploadDir, filename);
+  
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      console.error(`檔案不存在：${filePath}`);
+			const filenames = "default.png";
+			const filePaths = path.join(uploadDir, filenames);
+      //return res.status(404).json({ error: "檔案不存在" });
+			console.log("qq", filePaths);
+			return res.sendFile(filePaths);
+    }
+    
+		res.sendFile(filePath);
+  });
+};
+
