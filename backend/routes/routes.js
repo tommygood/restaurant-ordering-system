@@ -44,6 +44,7 @@ import {
 import { updateGrade } from "../controllers/grade.js";
 
 import { authMiddleware } from '../middlewares/auth.js';
+import { cartItemLimiter } from '../middlewares/rateLimiter.js';
 
 // init express router
 const router = express.Router();
@@ -73,7 +74,7 @@ router.post("/api/users/", createAccount);
 
 ////////////////////////// CART ////////////////////////////////
 // add to cart
-router.post("/api/cartItem", addItems);
+router.post("/api/cartItem", cartItemLimiter, addItems);
 
 // get a item in cart
 router.get("/api/cartItem/:user_name/:food_id", getItem);

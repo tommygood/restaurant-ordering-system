@@ -76,14 +76,44 @@ export const getAItem = (user, food, result) => {
 
 // insert new item to cart
 export const insertToCart = (data, result) => {
-  db.query("INSERT INTO cart SET ?", data, (err, results) => {
-    if (err) {
-      console.log(err);
-      result(err, null);
-    } else {
-      result(null, results[0]);
+  // First check if the item already exists
+  db.query(
+    "SELECT * FROM cart WHERE user_id = ? AND food_id = ?",
+    [data.user_id, data.food_id],
+    (err, existingItems) => {
+      if (err) {
+        console.log(err);
+        result(err, null);
+      } else {
+        if (existingItems.length > 0) {
+          // If item exists, update the quantity
+          const newQty = existingItems[0].item_qty + (data.item_qty || 1);
+          db.query(
+            "UPDATE cart SET item_qty = ? WHERE user_id = ? AND food_id = ?",
+            [newQty, data.user_id, data.food_id],
+            (err, results) => {
+              if (err) {
+                console.log(err);
+                result(err, null);
+              } else {
+                result(null, { ...results, message: "Updated existing item quantity" });
+              }
+            }
+          );
+        } else {
+          // If item doesn't exist, insert new
+          db.query("INSERT INTO cart SET ?", data, (err, results) => {
+            if (err) {
+              console.log(err);
+              result(err, null);
+            } else {
+              result(null, { ...results, message: "Added new item to cart" });
+            }
+          });
+        }
+      }
     }
-  });
+  );
 };
 
 // update qty of a cart item

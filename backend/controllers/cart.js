@@ -59,13 +59,31 @@ export const addItems = (req, res) => {
   let data = req.body;
   // put the user id into the data
   getUserId(data, (err, results) => {
+    if (err) {
+      res.status(500).json({
+        status: false,
+        message: "Failed to get user ID",
+        error: err
+      });
+      return;
+    }
+    
     data.user_id = results;
     delete data.user_name;
+    
     insertToCart(data, (err, results) => {
       if (err) {
-        res.send(err);
+        res.status(500).json({
+          status: false,
+          message: "Failed to add item to cart",
+          error: err
+        });
       } else {
-        res.json(results);
+        res.status(200).json({
+          status: true,
+          message: results.message || "Item added to cart",
+          data: results
+        });
       }
     });
   });

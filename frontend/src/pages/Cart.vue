@@ -293,9 +293,14 @@ export default {
       let discount = 0;
       let delivery = 15;
       let i = 0;
-			console.log("qwqq", this.filterFoods);
+			console.log("qwqq", this.filterFoods, this.itemQuantity);
 			if (this.filterFoods.length === 0) return [subtotal, discount, delivery, 0];
       while (i < this.itemQuantity.length) {
+        console.log("qwqqqqq", this.filterFoods[i]);
+        if (this.filterFoods[i] === undefined) {
+          i = i + 1;
+          continue;
+        }
         subtotal =
           subtotal +
           parseInt(this.filterFoods[i].food_price) * this.itemQuantity[i];

@@ -24,14 +24,13 @@ const store = createStore({
   },
   actions: {
     async getFoodsData(context) {
-      await axios
-        .get("https://mixed-restaurant.bogay.me/api/foods")
-        .then(function (response) {
-          context.commit("setFoodsData", response.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      try {
+        const response = await axios.get("/foods");
+        context.commit("setFoodsData", response.data);
+      } catch (error) {
+        console.error("Error loading foods:", error);
+        context.commit("setFoodsData", []);
+      }
     },
   },
 });
