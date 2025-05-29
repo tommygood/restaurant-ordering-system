@@ -86,7 +86,6 @@ CREATE TABLE cart (
 	table_id INT,
 	feedback VARCHAR(500),
 	grade INT(2)
-  primary key (user_id, food_id)
 );
 
 

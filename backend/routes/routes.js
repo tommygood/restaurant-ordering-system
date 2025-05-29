@@ -41,6 +41,8 @@ import {
   cancelBillStatus,
 } from "../controllers/billstatus.js";
 
+import { updateGrade } from "../controllers/grade.js";
+
 import { authMiddleware } from '../middlewares/auth.js';
 
 // init express router
@@ -108,6 +110,9 @@ router.put("/api/billstatus/paid/:id", updateBillPaid);
 router.put("/api/billstatus/cancel/:id", cancelBillStatus);
 router.post("/api/upload", uploadFile); 
 router.get("/api/download/:filename", downloadFile);
+
+////////////////////////// Grade ////////////////////////////////
+router.post("/api/grade", updateGrade);
 
 // export default router
 export default router;

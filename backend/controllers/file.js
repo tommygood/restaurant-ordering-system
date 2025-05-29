@@ -67,7 +67,7 @@ export const downloadFile = (req, res) => {
 			const filePaths = path.join(uploadDir, filenames);
       //return res.status(404).json({ error: "檔案不存在" });
 			console.log("qq", filePaths);
-			return res.sendFile(filePaths);
+			return res.status(404).sendFile(filePaths);
     }
     
 		res.sendFile(filePath);

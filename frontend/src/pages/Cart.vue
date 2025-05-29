@@ -90,7 +90,7 @@
                     </div>
 
 										<button
-											v-if="f.user_id"
+											v-if="f.existed"
 											@click="onGradeClick(f)"
 											class="btn btn-primary mt-2"
 										>
@@ -156,6 +156,26 @@
       </div>
     </div>
   </div>
+		<!-- Grading modal -->
+    <div v-if="showGradeModal" class="modal-backdrop">
+      <div class="grade-modal">
+        <h3>Rate Order #{{ selectedOrder.id }}</h3>
+        <div class="field">
+          <label>Grade:</label>
+          <select v-model.number="grade">
+            <option v-for="n in 5" :key="n" :value="n">{{ n }}</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Description:</label>
+          <textarea v-model="description" rows="4" placeholder="Enter your feedback"></textarea>
+        </div>
+        <div class="actions">
+          <button @click="submitGrade">Submit</button>
+          <button @click="closeModal">Cancel</button>
+        </div>
+      </div>
+    </div>
 </template>
 
 <script>
@@ -169,6 +189,10 @@ export default {
       cartItem: [],
       itemQuantity: [],
       existItem: [],
+			showGradeModal: false,
+      selectedOrder: {},
+      grade: 1,          
+      description: ''       
     };
   },
 
@@ -198,7 +222,8 @@ export default {
 				return {
 					...f,
 					user_id: matchedItem.user_id,
-					table_id: matchedItem.table_id
+					table_id: matchedItem.table_id,
+					existed: matchedItem.existed
 				};
 			});
 			console.log("final res", res);
@@ -209,9 +234,33 @@ export default {
   methods: {
     ...mapMutations(["setUser"]),
 
-		onGradeClick: function(order) {
-			console.log("order", order);
+		onGradeClick: async function(order) {
+			console.log("order", order)
+      this.selectedOrder = order
+      this.grade = 1
+      this.description = ''
+      this.showGradeModal = true
 		},
+
+		submitGrade: async function() {
+      try {
+        const payload = {
+          food_id: this.selectedOrder.food_id,
+          user_id: this.selectedOrder.user_id,
+          table_id: this.selectedOrder.table_id,
+          grade: this.grade,
+          description: this.description
+        }
+        await axios.post('/grade', payload);
+        this.showGradeModal = false;
+      } catch (err) {
+        console.error('Failed to submit grade', err);
+      }
+    },
+
+    closeModal: function() {
+      this.showGradeModal = false
+    },
 
 		checkUserExisted: function() {
 			let userInStorage = localStorage.getItem("user");
@@ -308,6 +357,18 @@ export default {
           this.cartItem.push(element.food_id);
           this.itemQuantity.push(element.item_qty);
         });
+				console.log("kkkkkk");
+				for (let i = 0;i < this.existItem.data.length;i++) {
+					try {
+						console.log("@@s");
+						const res = await axios.get(`/download/order_${this.existItem.data[i].user_id}_${this.existItem.data[i].food_id}_${this.existItem.data[i].table_id}.png`);
+						console.log("@@",res);
+						this.existItem.data[i].existed = true;
+					}
+					catch(e) {
+						console.log("@@e", e);
+					}
+				}
       }
     },
   },
@@ -527,5 +588,115 @@ export default {
   .in-cart .box-content .check-out-btn {
     display: none;
   }
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.grade-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 400px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10000;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.grade-modal h3 {
+  margin: 0 0 1.5rem 0;
+  color: #27ae60;
+  font-size: 1.5rem;
+}
+
+.field {
+  margin: 1rem 0;
+}
+
+.field label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.field select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  background-color: white;
+}
+
+.field textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 100px;
+  background-color: white;
+}
+
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: #27ae60;
+  box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.1);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.actions button {
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 100px;
+}
+
+.actions button:first-child {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+}
+
+.actions button:last-child {
+  background-color: #f8f9fa;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.actions button:hover {
+  transform: translateY(-1px);
+}
+
+.actions button:first-child:hover {
+  background-color: #219a52;
+}
+
+.actions button:last-child:hover {
+  background-color: #e9ecef;
 }
 </style>
