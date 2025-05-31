@@ -1,4 +1,8 @@
 // import functions from User model
+import db from "../config/database.js";
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 import {
   getAllItems,
@@ -9,14 +13,35 @@ import {
   deleteAllItemsByUser,
   getUserId,
 	getAllCartItems,
+  getDeliveredCartItems,
+  generateRandomCartItem,
 } from "../models/CartModel.js";
 
+// Global variable to store the interval ID
+let autoGenerateInterval = null;
+let autoStopTimeout = null;
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const uploadDir = path.join(__dirname, "../uploads");
 
 // get all Items
 export const allCartItems = (req, res) => {
-    getAllCartItems((err, results) => {
+    // Check if delivered header exists and is false
+    const showUndelivered = req.headers.delivered === 'false';
+    console.log(`PP ${showUndelivered}, ${JSON.stringify(req.headers)}`);
+    
+    // Use different query based on delivered header
+    const query = showUndelivered 
+      ? "SELECT * FROM cart WHERE delivered != true AND item_qty > 0"
+      : "SELECT * FROM cart WHERE item_qty > 0";
+
+    db.query(query, (err, results) => {
       if (err) {
-        res.send(err);
+        res.status(500).json({
+          status: false,
+          message: "Failed to get cart items",
+          error: err
+        });
       } else {
         console.log(`TT ${results}, ${JSON.stringify(results)}`);
         res.json(results);
@@ -123,4 +148,104 @@ export const deleteItems = (req, res) => {
       res.json(results);
     }
   });
+};
+
+// Get all delivered cart items
+export const getDeliveredItems = (req, res) => {
+  getDeliveredCartItems((err, results) => {
+    if (err) {
+      res.status(500).json({
+        status: false,
+        message: "Failed to get delivered items",
+        error: err
+      });
+    } else {
+      res.status(200).json({
+        status: true,
+        message: "Successfully retrieved delivered items",
+        data: results
+      });
+    }
+  });
+};
+
+// Delete all cart items
+const deleteAllCartItems = async () => {
+  try {
+    // Delete all cart items from database
+    await db.promise().query("DELETE FROM cart");
+
+    // Delete all files in uploads directory except default.png
+    const files = fs.readdirSync(uploadDir);
+    for (const file of files) {
+      if (file !== 'default.png') {
+        const filePath = path.join(uploadDir, file);
+        fs.unlinkSync(filePath);
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error in deleteAllCartItems:', error);
+    throw error;
+  }
+};
+
+// Start/Stop auto-generating cart items
+export const toggleAutoGenerate = async (req, res) => {
+  try {
+    // Clear existing interval and timeout if they exist
+    if (autoGenerateInterval) {
+      clearInterval(autoGenerateInterval);
+      autoGenerateInterval = null;
+    }
+    if (autoStopTimeout) {
+      clearTimeout(autoStopTimeout);
+      autoStopTimeout = null;
+    }
+
+    // Delete all cart items first
+    await deleteAllCartItems();
+
+    // Start new interval
+    autoGenerateInterval = setInterval(async () => {
+      try {
+        // Random interval between 5-8 seconds
+        const randomInterval = Math.floor(Math.random() * (8000 - 5000 + 1)) + 5000;
+        const result = await generateRandomCartItem();
+        
+        // Only set new interval if item was generated (less than 5 undelivered items)
+        if (result !== null) {
+          // Clear and set new interval with random duration
+          clearInterval(autoGenerateInterval);
+          autoGenerateInterval = setInterval(async () => {
+            await generateRandomCartItem();
+          }, randomInterval);
+        }
+      } catch (error) {
+        console.error('Error in auto-generate interval:', error);
+      }
+    }, 5000); // Initial delay of 5 seconds
+
+    // Set auto-stop timeout for 5 minutes
+    autoStopTimeout = setTimeout(() => {
+      if (autoGenerateInterval) {
+        clearInterval(autoGenerateInterval);
+        autoGenerateInterval = null;
+        console.log('Auto-generation stopped after 5 minutes');
+      }
+    }, 5 * 60 * 1000); // 5 minutes in milliseconds
+
+    res.json({ 
+      status: true,
+      message: "Cart items cleared and auto-generation restarted (will stop after 5 minutes, max 5 undelivered items)" 
+    });
+  } catch (error) {
+    console.error('Error in auto-generate:', error);
+    res.status(500).json({
+      status: false,
+      message: "Failed to handle auto-generate",
+      error: error.message
+    });
+  }
 };

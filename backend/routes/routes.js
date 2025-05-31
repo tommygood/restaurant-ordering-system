@@ -21,6 +21,8 @@ import {
   deleteItem,
   deleteItems,
 	allCartItems,
+  getDeliveredItems,
+  toggleAutoGenerate,
 } from "../controllers/cart.js";
 
 import { createBooking } from "../controllers/booktable.js";
@@ -92,6 +94,12 @@ router.delete("/api/cartItem/:user_id/:food_id", authMiddleware, deleteItem);
 
 // delete all items in cart
 router.delete("/api/cartItem/:id", deleteItems);
+
+// get all delivered cart items
+router.get("/api/delivered-items", getDeliveredItems);
+
+// toggle auto-generation of cart items
+router.post("/api/cart/auto-generate", toggleAutoGenerate);
 
 ////////////////////////// Booking ////////////////////////////////
 router.post("/api/booking", createBooking);

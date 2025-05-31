@@ -7,6 +7,7 @@
     <nav class="navbar">
       <router-link @click="scrollToTop()" to="/cart">cart</router-link>
       <router-link @click="scrollToTop()" to="/menu">menu</router-link>
+      <router-link @click="scrollToTop()" to="/delivered-items">delivered items</router-link>
     </nav>
 
     <div class="icons">

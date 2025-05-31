@@ -357,21 +357,17 @@ export default {
       if (this.user) {
         const existItem = await axios.get("/cartItem/" + this.user.username);
 				this.existItem = existItem;
-				console.log("ff", existItem);
         this.existItem.data.forEach((element) => {
           this.cartItem.push(element.food_id);
           this.itemQuantity.push(element.item_qty);
         });
-				console.log("kkkkkk");
 				for (let i = 0;i < this.existItem.data.length;i++) {
 					try {
-						console.log("@@s");
-						const res = await axios.get(`/download/order_${this.existItem.data[i].user_id}_${this.existItem.data[i].food_id}_${this.existItem.data[i].table_id}.png`);
-						console.log("@@",res);
+						await axios.get(`/download/order_${this.existItem.data[i].food_id}_${this.existItem.data[i].user_id}_${this.existItem.data[i].table_id}.png`);
 						this.existItem.data[i].existed = true;
 					}
 					catch(e) {
-						console.log("@@e", e);
+						console.log("e", e);
 					}
 				}
       }

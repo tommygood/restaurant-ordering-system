@@ -12,6 +12,7 @@ import Thank from '../pages/Thank.vue';
 import MyOrder from '../pages/MyOrder.vue';
 import Admin from '../admin/Admin.vue';
 import Dashboard from '../admin/Dashboard.vue';
+import DeliveredItems from '../pages/DeliveredItems.vue'
 
 
 const routes = [
@@ -79,6 +80,11 @@ const routes = [
     path: "/admin/dashboard",
     name: "Dashboard",
     component: Dashboard,
+  },
+  {
+    path: '/delivered-items',
+    name: 'DeliveredItems',
+    component: DeliveredItems
   },
   {
     path: '/:pathMatch(.*)*',
