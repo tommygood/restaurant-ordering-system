@@ -288,3 +288,26 @@ export const generateRandomCartItem = async () => {
     return null;
   }
 };
+
+// Update auto_grade for a specific order
+export const updateAutoGrade = (userId, foodId, tableId, autoGrade, result) => {
+  db.query(
+    "UPDATE cart SET auto_grade = ? WHERE user_id = ? AND food_id = ? AND table_id = ?",
+    [autoGrade, userId, foodId, tableId],
+    (err, results) => {
+      if (err) {
+        console.log(err);
+        result(err, null);
+      } else {
+        if (results.affectedRows === 0) {
+          result({ message: "Order not found" }, null);
+        } else {
+          result(null, {
+            message: "Auto grade updated successfully",
+            affectedRows: results.affectedRows
+          });
+        }
+      }
+    }
+  );
+};

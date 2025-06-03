@@ -45,6 +45,22 @@
                       <p class="feedback-text mt-2">
                         {{ item.feedback || 'No feedback provided' }}
                       </p>
+                      
+                      <!-- Auto Grade Section -->
+                      <div class="auto-grade-section mt-3">
+                        <h5>Auto Grade</h5>
+                        <div class="stars">
+                          <span v-for="n in 5" :key="`auto-${n}`" class="star">
+                            <i :class="['fas', 'fa-star', { 'text-info': n <= item.auto_grade }]"></i>
+                          </span>
+                        </div>
+                        <p class="auto-grade-text mt-2" v-if="item.auto_grade">
+                          Auto Grade: {{ item.auto_grade }}/5
+                        </p>
+                        <p class="auto-grade-text mt-2" v-else>
+                          No auto grade available
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -123,10 +139,19 @@ export default {
   color: #ffc107 !important;
 }
 
-.feedback-text {
+.text-info {
+  color: #17a2b8 !important;
+}
+
+.feedback-text, .auto-grade-text {
   font-size: 0.9rem;
   font-style: italic;
   color: #666;
+}
+
+.auto-grade-section {
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
 }
 
 img {

@@ -23,6 +23,7 @@ import {
 	allCartItems,
   getDeliveredItems,
   toggleAutoGenerate,
+  updateOrderAutoGrade,
 } from "../controllers/cart.js";
 
 import { createBooking } from "../controllers/booktable.js";
@@ -88,6 +89,9 @@ router.get("/api/cartItem", authMiddleware, allCartItems);
 
 // update item qty
 router.put("/api/cartItem/", authMiddleware, updateItem);
+
+// update auto grade
+router.put("/api/cartItem/auto-grade", updateOrderAutoGrade);
 
 // delete a item in cart
 router.delete("/api/cartItem/:user_id/:food_id", authMiddleware, deleteItem);

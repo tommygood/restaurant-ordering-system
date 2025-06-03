@@ -15,6 +15,7 @@ import {
 	getAllCartItems,
   getDeliveredCartItems,
   generateRandomCartItem,
+  updateAutoGrade,
 } from "../models/CartModel.js";
 
 // Global variable to store the interval ID
@@ -248,4 +249,43 @@ export const toggleAutoGenerate = async (req, res) => {
       error: error.message
     });
   }
+};
+
+// Update auto_grade for a specific order
+export const updateOrderAutoGrade = (req, res) => {
+  const foodId = req.headers['food-id'];
+  const userId = req.headers['user-id'];
+  const tableId = req.headers['table-id'];
+  const auto_grade = req.headers['auto-grade'];
+
+  // Validate required headers
+  if (!foodId || !userId || !tableId) {
+    return res.status(400).json({
+      status: false,
+      message: "Missing required headers: food-id, user-id, and table-id are required"
+    });
+  }
+
+  if (auto_grade === undefined) {
+    return res.status(400).json({
+      status: false,
+      message: "auto_grade is required in request body"
+    });
+  }
+
+  updateAutoGrade(userId, foodId, tableId, auto_grade, (err, results) => {
+    if (err) {
+      res.status(500).json({
+        status: false,
+        message: "Failed to update auto grade",
+        error: err
+      });
+    } else {
+      res.status(200).json({
+        status: true,
+        message: results.message,
+        data: results
+      });
+    }
+  });
 };
